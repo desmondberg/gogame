@@ -8,8 +8,8 @@ class Board(QFrame):  # base the board on a QFrame widget
     clickLocationSignal = pyqtSignal(str)  # signal sent when there is a new click location
 
     # TODO set the board width and height to be square
-    boardWidth = 0  # board is 0 squares wide # TODO this needs updating
-    boardHeight = 0  #
+    boardWidth = 7  # board is 0 squares wide # TODO this needs updating
+    boardHeight = 7  #
     timerSpeed = 1000  # the timer updates every 1 second
     counter = 10  # the number the counter will count down from
 
