@@ -9,7 +9,7 @@ class Board(QFrame):  # base the board on a QFrame widget
     clickLocationSignal = pyqtSignal(str)  # signal sent when there is a new click location
 
     # TODO set the board width and height to be square
-    boardWidth = 7  # board is 0 squares wide # TODO this needs updating
+    boardWidth = 7  # board is 7 squares wide 
     boardHeight = 7  #
     timerSpeed = 1000  # the timer updates every 1 second
     counter = 10  # the number the counter will count down from
@@ -25,13 +25,15 @@ class Board(QFrame):  # base the board on a QFrame widget
         self.isStarted = False  # game is not currently started
         self.start()  # start the game which will start the timer
 
-        self.boardArray = []  # TODO - create a 2d int/Piece array to store the state of the game
-        # self.printBoardArray()    # TODO - uncomment this method after creating the array above
 
+        # initiate the board's state as a 2D array with width equal to boardWidth and height equal to boardHeight
+        # each cell's value will be 0 at the beginning
+        self.boardState = [[0 for col in range(self.boardHeight) ] for row in range(self.boardWidth)]
+        self.printBoardArray()    
     def printBoardArray(self):
         '''prints the boardArray in an attractive way'''
-        print("boardArray:")
-        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.boardArray]))
+        print("board state:")
+        print('\n'.join(['\t'.join([str(cell) for cell in row]) for row in self.boardState]))
 
     def mousePosToColRow(self, event):
         '''convert the mouse click event to a row and column'''
@@ -96,13 +98,13 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     def drawPieces(self, painter):
         '''draw the pieces on the board'''
-        for row in range(0, len(self.boardArray)):
-            for col in range(0, len(self.boardArray[0])):
+        for row in range(0, len(self.boardState)):
+            for col in range(0, len(self.boardState[0])):
                 painter.save()
                 painter.translate(col * self.squareWidth(), row * self.squareHeight())
                 # TODO draw some pieces as ellipses
                 # TODO choose your color and set the painter brush to the correct color
-                radius = (self.squareWidth() - 2) / 2
+                radius = math.floor((self.squareWidth() - 2) / 2)
                 center = QPoint(radius, radius)
                 painter.drawEllipse(center, radius, radius)
                 painter.restore()
