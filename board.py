@@ -1,3 +1,4 @@
+import math
 from PyQt6.QtWidgets import QFrame
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QPoint
 from PyQt6.QtGui import QPainter, QColor, QBrush
@@ -38,11 +39,11 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     def squareWidth(self):
         '''returns the width of one square in the board'''
-        return self.contentsRect().width() / self.boardWidth
+        return math.floor(self.contentsRect().width() / self.boardWidth)
 
     def squareHeight(self):
         '''returns the height of one square of the board'''
-        return self.contentsRect().height() / self.boardHeight
+        return math.floor(self.contentsRect().height() / self.boardHeight)
 
     def start(self):
         '''starts game'''
@@ -68,7 +69,7 @@ class Board(QFrame):  # base the board on a QFrame widget
 
     def mousePressEvent(self, event):
         '''this event is automatically called when the mouse is pressed'''
-        clickLoc = "click location [" + str(event.x()) + "," + str(event.y()) + "]"  # the location where a mouse click was registered
+        clickLoc = "click location [" + str(event.position().x()) + "," + str(event.position().y()) + "]"  # the location where a mouse click was registered
         print("mousePressEvent() - " + clickLoc)
         # TODO you could call some game logic here
         self.clickLocationSignal.emit(clickLoc)
