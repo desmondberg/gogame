@@ -5,31 +5,61 @@ from PyQt6.QtGui import QPainter, QColor, QBrush, QPixmap,QIcon
 
 class Cell(QPushButton):
     '''represents a cell on the board, upon which a piece can be placed'''
-    
-    def __init__(self, text, row=None,col=None, parent=None):
+
+    def __init__(self, text=None, row=None,col=None, parent=None):
         super().__init__(text, parent)
         self.row=row
         self.col=col
         self.board=parent
+        self.gridUrl = './assets/grid/Grid Normal.png'
 
-        self.default_colour = "#e6cd98"
-        self.hover_colour= "#dbc086"
-        #self.clicked_colour= "#d3b678"
+        if self.col == 0:
+            if self.row == 0:
+                self.gridUrl = './assets/grid/Grid Top Left Corner.png'
+            else:
+                 self.gridUrl = './assets/grid/Grid Left Edge.png'
+        
+        elif self.row == 0:
+            self.gridUrl = './assets/grid/Grid Top Edge.png'
+        
+        if self.col == self.board.boardWidth-1:
+            if self.row == self.board.boardHeight-1:
+                self.gridUrl = './assets/grid/Grid Bottom Right Corner.png'
+            elif self.row == 0:
+                self.gridUrl = './assets/grid/Grid Top Right Corner.png'
+            else:
+                self.gridUrl = './assets/grid/Grid Right Edge.png'
 
-    # events for when the user hovers over a cell
-    def enterEvent(self, event):
-        # only make the cell darker when hovered on if there isn't a piece on it
-        if(self.board.boardState[self.row][self.col]==0):
-            self.setStyleSheet(f"background-color: {self.hover_colour}; border: 1px solid black;") 
-        super().enterEvent(event) 
+        elif self.row == self.board.boardHeight-1:
+            if self.col == 0:
+                self.gridUrl = './assets/grid/Grid Bottom Left Corner.png'
+            else:
+                self.gridUrl = './assets/grid/Grid Bottom Edge.png'
 
-    def leaveEvent(self, event):
-        self.setStyleSheet(f"background-color: {self.default_colour}; border: 1px solid black;") 
-        super().leaveEvent(event)
+        
+        
 
-    def mouseReleaseEvent(self, event):
-        self.setStyleSheet(f"background-color: {self.default_colour}; border: 1px solid black;") 
-        super().mouseReleaseEvent(event)
+
+        
+        
+        self.style = """
+        QPushButton {
+            border: none;  /* remove border */
+            background-color: #eec58a; 
+
+            /* grid texture */
+            background-image: url(%s);  /* Path to the texture */
+            background-repeat: no-repeat; 
+            background-position: center; 
+        }
+        QPushButton:hover {
+            background-color:rgb(230, 183, 116);  
+        }
+        QPushButton:pressed {
+            background-color:rgb(230, 183, 116);  
+        }
+        """ % (self.gridUrl)
+        self.setStyleSheet(self.style)
 
 class Board(QFrame): 
     '''the game board, which consists of a grid of Cell objects'''
@@ -47,7 +77,8 @@ class Board(QFrame):
     counter = 10  # the number the counter will count down from
 
     # CELL AND PIECE PARAMETERS
-    pieceSizeFactor=0.94 # the ratio of the size of the piece to the cell
+    pieceSizeFactor=0.9 # the ratio of the size of the piece to the cell
+    
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -75,16 +106,14 @@ class Board(QFrame):
 
         # initialise a grid and buttons for each cell, as a physical representation of the board state
         self.grid = QGridLayout()
-        self.grid.setSpacing(2)
+        self.grid.setSpacing(0)
         self.cells = []
         for row in range(self.boardHeight):
             cell_row=[]
             for col in range(self.boardWidth):
-                cell_button = Cell("",row,col,self)
-
-                #placeholder style
-                cell_button.setStyleSheet("background-color: #e6cd98; border: 1px solid black;")
-
+                #initialise Cell object
+                cell_button = Cell(row=row,col=col,parent=self)
+                #connect the cell to a the placePiece function whenever its clicked
                 cell_button.clicked.connect(lambda _, r=row, c=col: self.placePiece(r, c))
                 self.grid.addWidget(cell_button,row,col)
                 cell_row.append(cell_button)
