@@ -92,15 +92,17 @@ class Board(QFrame):
         self.isStarted = False  # game is not currently started
         self.start()  # start the game which will start the timer
 
-        # initialise the board's state as a 2D array with width equal to boardWidth and height equal to boardHeight
-        # each Tile's value will be 0 at the beginning
+        # the board state is a 2D array with a width of boardWidth and height of boardHeight, initially filled with 0s
+        # 0 - unoccupied
+        # 1 - occupied by white
+        # 2 - occupied by black
         self.boardState = [[0 for col in range(self.boardWidth) ] for row in range(self.boardHeight)]
         self.printBoardState() 
 
-        #initialise players, 1=white, 2=black
+        # 1 for white, 2 for black
         self.currentPlayer=1
 
-        #initialise icons for the pieces
+        #icons for the pieces
         self.blackPiece = QPixmap("./assets/black_piece.png")
         self.whitePiece = QPixmap("./assets/white_piece.png")
         
