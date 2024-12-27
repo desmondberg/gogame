@@ -57,7 +57,7 @@ class Go(QMainWindow):
 
         # Create the control panel
         self.control_panel = GameControlPanel(self.board)
-        self.control_panel.setFixedSize(400,350)
+        self.control_panel.setFixedSize(400,500)
         self.board.control_panel = self.control_panel
         control_dock.setWidget(self.control_panel)
 

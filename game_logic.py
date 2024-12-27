@@ -185,7 +185,7 @@ class GameLogic:
                 if ((row, col) not in counted and
                         self.board.boardState[row][col] == 0):
                     territory_points, owner = self.count_territory(row, col)
-                    if owner > 0:
+                    if owner > 0: # If owner is either player 1 or 2
                         territory[owner] += territory_points
 
         # Calculate final scores
@@ -209,7 +209,7 @@ class GameLogic:
         borders = set()  # Colors of stones surrounding territory
         stack = [(row, col)]
 
-        # similar to past functions, go up,down,left,right but different purpose
+        # similar to past functions, go up,down,left,right but to count territory
         while stack:
             row, col = stack.pop()
             if (row, col) not in visited:
@@ -351,6 +351,7 @@ class GameControlPanel(QWidget):
         timer_layout.addWidget(timer_label)
         timer_layout.addWidget(self.timer_display)
         layout.addLayout(timer_layout) # Below current player but above captures
+        layout.addSpacing(30)
 
         # Score display elements
         score_layout = QHBoxLayout()
@@ -368,12 +369,12 @@ class GameControlPanel(QWidget):
         self.white_captures.setStyleSheet(lcd_style)
 
         # Labels for black and white captures
-        black_score_label = QLabel('Black Captures:')
+        black_score_label = QLabel('Black Prisoners:')
         black_score_label.setStyleSheet(score_label_style)
         score_layout.addWidget(black_score_label)
         score_layout.addWidget(self.black_captures)
 
-        white_score_label = QLabel('White Captures:')
+        white_score_label = QLabel('White Prisoners:')
         white_score_label.setStyleSheet(score_label_style)
         score_layout.addWidget(white_score_label)
         score_layout.addWidget(self.white_captures)
