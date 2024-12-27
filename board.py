@@ -3,6 +3,9 @@ from PyQt6.QtWidgets import QFrame, QGridLayout,QPushButton,QSizePolicy
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QPoint,QSize
 from PyQt6.QtGui import QPainter, QColor, QBrush, QPixmap,QIcon
 
+from game_logic import GameLogic, GameControlPanel
+
+
 class Tile(QPushButton):
     '''represents a Tile on the board, upon which a piece can be placed'''
 
@@ -73,9 +76,9 @@ class Board(QFrame):
     boardWidth = 7  
     boardHeight = 7  
 
-    # TIMER PARAMETERS
-    timerSpeed = 1000  # the timer updates every 1 second
-    counter = 10  # the number the counter will count down from
+    # # TIMER PARAMETERS
+    # timerSpeed = 1000  # the timer updates every 1 second
+    # counter = 10  # the number the counter will count down from
 
     # Tile AND PIECE PARAMETERS
     pieceSizeFactor=0.9 # the ratio of the size of the piece to the Tile
@@ -87,10 +90,10 @@ class Board(QFrame):
         #calculate the initial Tile size 
         self.tile_size = self.getTileSize()
 
-        self.timer = QTimer(self)  # create a timer for the game
-        #self.timer.timeout.connect(self.timerEvent)  # connect timeout signal to timerEvent method
-        self.isStarted = False  # game is not currently started
-        self.start()  # start the game which will start the timer
+        # self.timer = QTimer(self)  # create a timer for the game
+        # #self.timer.timeout.connect(self.timerEvent)  # connect timeout signal to timerEvent method
+        # self.isStarted = False  # game is not currently started
+        # self.start()  # start the game which will start the timer
 
         # the board state is a 2D array with a width of boardWidth and height of boardHeight, initially filled with 0s
         # 0 - unoccupied
@@ -100,7 +103,7 @@ class Board(QFrame):
         self.printBoardState() 
 
         # 1 for white, 2 for black
-        self.currentPlayer=1
+        self.currentPlayer=2
 
         #icons for the pieces
         self.blackPiece = QPixmap("./assets/black_piece.png")
@@ -120,7 +123,7 @@ class Board(QFrame):
                 #initialise Tile object, passing the current row and column, as well as the board as parameters
                 tile_button = Tile(row=row,col=col,parent=self)
 
-                #connect the Tile to a the placePiece function whenever its clicked
+                #connect the Tile to the placePiece function whenever its clicked
                 tile_button.clicked.connect(lambda _, r=row, c=col: self.placePiece(r, c))
 
                 #add tile to grid
@@ -133,6 +136,7 @@ class Board(QFrame):
             self.tiles.append(tile_row)
             
         self.setLayout(self.grid)
+        self.game_logic = GameLogic(self)
 
     def getTileSize(self):
         '''gets the Tile size. the Tile size is calculated using the widget's width and height'''
@@ -154,10 +158,7 @@ class Board(QFrame):
                     self.tiles[row][col].setFixedSize(self.tile_size,self.tile_size)
                     self.tiles[row][col].setIconSize(QSize(int(self.tile_size * self.pieceSizeFactor), int(self.tile_size * self.pieceSizeFactor)))
 
-        super().resizeEvent(event) 
-
-    
-
+        super().resizeEvent(event)
         
 
     def printBoardState(self):
@@ -174,17 +175,17 @@ class Board(QFrame):
         '''starts game'''
         self.isStarted = True  # set the boolean which determines if the game has started to TRUE
         self.resetGame()  # reset the game
-        self.timer.start(self.timerSpeed)  # start the timer with the correct speed
-        print("start () - timer is started")
+        # self.timer.start(self.timerSpeed)  # start the timer with the correct speed
+        # print("start () - timer is started")
 
-    def timerEvent(self):
-        '''this event is automatically called when the timer is updated. based on the timerSpeed variable '''
-        # TODO adapt this code to handle your timers
-        if Board.counter == 0:
-            print("Game over")
-        self.counter -= 1
-        print('timerEvent()', self.counter)
-        self.updateTimerSignal.emit(self.counter)
+    # def timerEvent(self):
+    #     '''this event is automatically called when the timer is updated. based on the timerSpeed variable '''
+    #     # TODO adapt this code to handle your timers
+    #     if Board.counter == 0:
+    #         print("Game over")
+    #     self.counter -= 1
+    #     print('timerEvent()', self.counter)
+    #     self.updateTimerSignal.emit(self.counter)
 
     def togglePlayer(self):
         '''toggles the current player'''
@@ -193,16 +194,29 @@ class Board(QFrame):
         elif self.currentPlayer==2:
             self.currentPlayer=1
 
+        self.control_panel.update_player(self.currentPlayer)
+        self.control_panel.handle_turn_change()
+
 
     def placePiece(self, row, col):
         '''places a new piece on the board'''
+        # Store current state before validating move, needed for ko rule
+        self.game_logic.last_board_state = [row[:] for row in self.boardState]
+        if self.game_logic.is_valid_move(row, col):
+            self.boardState[row][col] = self.currentPlayer
+            self.game_logic.handle_captures()
+            self.control_panel.update_captures()
+            self.game_logic.last_move_pass = False # Reset pass flag on regular move
 
-        #check if the Tile is empty
-        if self.boardState[row][col]==0:
-            self.boardState[row][col]=self.currentPlayer
+            # Check if board is full after valid move
+            if self.game_logic.is_board_full():
+                self.game_logic.game_over = True
+                self.control_panel.show_gameOve(*self.game_logic.calculate_score())
+                return
 
-        self.drawBoard()
-        self.togglePlayer()
+            self.drawBoard()
+            self.togglePlayer()
+
 
 
     def resetGame(self):
