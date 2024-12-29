@@ -206,6 +206,7 @@ class Board(QFrame):
             self.boardState[row][col] = self.currentPlayer
             self.game_logic.handle_captures()
             self.control_panel.update_captures()
+            self.control_panel.update_territory()
             self.game_logic.last_move_pass = False # Reset pass flag on regular move
 
             # Check if board is full after valid move
