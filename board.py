@@ -74,11 +74,7 @@ class Board(QFrame):
 
     # BOARD PARAMETERS
     boardWidth = 7  
-    boardHeight = 7  
-
-    # # TIMER PARAMETERS
-    # timerSpeed = 1000  # the timer updates every 1 second
-    # counter = 10  # the number the counter will count down from
+    boardHeight = 7
 
     # Tile AND PIECE PARAMETERS
     pieceSizeFactor=0.9 # the ratio of the size of the piece to the Tile
@@ -89,11 +85,6 @@ class Board(QFrame):
 
         #calculate the initial Tile size 
         self.tile_size = self.getTileSize()
-
-        # self.timer = QTimer(self)  # create a timer for the game
-        # #self.timer.timeout.connect(self.timerEvent)  # connect timeout signal to timerEvent method
-        # self.isStarted = False  # game is not currently started
-        # self.start()  # start the game which will start the timer
 
         # the board state is a 2D array with a width of boardWidth and height of boardHeight, initially filled with 0s
         # 0 - unoccupied
@@ -171,21 +162,6 @@ class Board(QFrame):
         print("board state:")
         print('\n'.join(['\t'.join([str(Tile) for Tile in row]) for row in self.boardState]))
 
-    def start(self):
-        '''starts game'''
-        self.isStarted = True  # set the boolean which determines if the game has started to TRUE
-        self.resetGame()  # reset the game
-        # self.timer.start(self.timerSpeed)  # start the timer with the correct speed
-        # print("start () - timer is started")
-
-    # def timerEvent(self):
-    #     '''this event is automatically called when the timer is updated. based on the timerSpeed variable '''
-    #     # TODO adapt this code to handle your timers
-    #     if Board.counter == 0:
-    #         print("Game over")
-    #     self.counter -= 1
-    #     print('timerEvent()', self.counter)
-    #     self.updateTimerSignal.emit(self.counter)
 
     def togglePlayer(self):
         '''toggles the current player'''
@@ -239,9 +215,6 @@ class Board(QFrame):
                     piece=QIcon()
 
                 tile_button.setIcon(piece)
-
-        #self.printBoardState()
-                
                 
 
 
