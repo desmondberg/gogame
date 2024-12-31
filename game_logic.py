@@ -514,6 +514,7 @@ class GameControlPanel(QWidget):
             self.black_captures.display(0)
             self.white_captures.display(0)
             self.current_player.setStyleSheet("")
+            self.current_player_label.setText("")
 
             # Redraw board
             self.board.drawBoard()
@@ -555,5 +556,6 @@ class GameControlPanel(QWidget):
             self.pass_button.setEnabled(False)
             self.black_captures.display(0)
             self.white_captures.display(0)
+            self.current_player_label.setText("")
             self.current_player.setStyleSheet("")
             self.board.drawBoard()
