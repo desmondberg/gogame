@@ -176,8 +176,12 @@ class GameLogic:
     def count_territory(self, row, col):
         if self.board.boardState[row][col] != 0:  # If not empty space
             return 0, 0
-        if sum(row.count(0) for row in self.board.boardState) >= (self.board_size * self.board_size - 1):
-            return 0, 0  # Return no territory if only one stone on board
+
+        # Check if there is at least one stone of each color on the board
+        has_white = any(1 in row for row in self.board.boardState)
+        has_black = any(2 in row for row in self.board.boardState)
+        if not (has_white and has_black):
+            return 0, 0
 
         empty_spaces = set()  # Track connected empty spaces
         surrounding_colors = set()  # Colors of stones surrounding the empty area
