@@ -44,6 +44,31 @@ class Tile(QPushButton):
                 self.gridUrl = './assets/grid/Grid Bottom Left Corner.png'
             else:
                 self.gridUrl = './assets/grid/Grid Bottom Edge.png'
+
+        # dots
+        if self.row == int(self.board.boardHeight/2):
+            if self.col==int(self.board.boardWidth/2):
+                self.gridUrl='./assets/grid/Grid Dot.png'
+            if self.col == 1:
+                self.gridUrl='./assets/grid/Grid Dot.png'
+            if self.col == self.board.boardWidth-2:
+                self.gridUrl='./assets/grid/Grid Dot.png'
+            
+        elif self.col==int(self.board.boardWidth/2):   
+            if self.row == 1:
+                self.gridUrl='./assets/grid/Grid Dot.png'
+            if self.row == self.board.boardHeight-2:
+                self.gridUrl='./assets/grid/Grid Dot.png'
+        
+        elif self.row == 1 and self.col==1 or self.row == self.board.boardHeight-2 and self.col==self.board.boardWidth-2:
+            self.gridUrl='./assets/grid/Grid Dot.png'
+        
+        elif self.row == 1 and self.col==self.board.boardWidth-2 or self.row == self.board.boardHeight-2 and  self.col==1:
+            self.gridUrl='./assets/grid/Grid Dot.png'
+
+
+        
+        
     
         # stylesheet
         self.style = """

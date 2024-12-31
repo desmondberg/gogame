@@ -170,6 +170,8 @@ class GameLogic:
         if not self.game_over:
             self.board.togglePlayer()  # Switch to next player
 
+
+
     # Method to determine and count if an area of empty spaces is territory for a player.
     def count_territory(self, row, col):
         if self.board.boardState[row][col] != 0:  # If not empty space
@@ -344,16 +346,26 @@ class GameControlPanel(QWidget):
         player_control = QHBoxLayout()
         self.player_label = QLabel('Current Player: ')
         self.player_label.setStyleSheet("color:white; font-weight: 500; letter-spacing: 0.5px; font-size: 15px")
+        self.current_player_layout = QVBoxLayout()
         self.current_player = QLabel('')
+        self.current_player_label = QLabel('')
         self.pass_button = QPushButton('Pass Turn')
         self.pass_button.clicked.connect(self.board.game_logic.handle_pass)
         self.pass_button.setStyleSheet(pass_style)
         self.pass_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.pass_button.setEnabled(False)  # Initially disabled
-        player_control.addWidget(self.player_label)
-        player_control.addWidget(self.current_player)
-        player_control.addStretch(0.5)
+
+        # current player indicator
+        self.current_player_layout.addWidget(self.current_player)
+        self.current_player_layout.addWidget(self.current_player_label)
+        self.current_player_widget = QWidget()
+        self.current_player_widget.setLayout(self.current_player_layout)
+
+        player_control.addWidget(self.player_label,alignment=Qt.AlignmentFlag.AlignCenter)
+        player_control.addWidget(self.current_player_widget, alignment=Qt.AlignmentFlag.AlignCenter)
+        player_control.addStretch(1)
         player_control.addWidget(self.pass_button)
+
         layout.addLayout(player_control)
 
         # Timer display setup
@@ -457,6 +469,7 @@ class GameControlPanel(QWidget):
         size = 40  # Diameter of the circle
         self.current_player.setFixedSize(size, size)
         self.current_player.setStyleSheet(f"background-color: {color}; border-radius: {size // 2}px;")
+        self.current_player_label.setText(color.capitalize())
 
     # Method to update captures shown in lcd (prisoners)
     def update_captures(self):
@@ -519,7 +532,7 @@ class GameControlPanel(QWidget):
 
     def update_timer_display(self):
         time = self.player_timers[self.board.currentPlayer]  # Current decreased time
-        self.timer_display.display(f"{time // 60:02d}{time % 60:02d}")  # Format time MM:SS
+        self.timer_display.display(f"{time // 60:02d}:{time % 60:02d}")  # Format time MM:SS
 
     def handle_game_over(self, message):  # This game over is for when time runs out
         self.timer_display.display(0)
